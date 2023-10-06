@@ -1,0 +1,197 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// displayMenu function
+void displayMenu(){
+cout << "MENU" << endl;
+cout << "a - Add player" << endl;
+cout << "d - Remove player" << endl;
+cout << "u - Update player rating" << endl;
+cout << "r - Output players above a rating" << endl;
+cout << "o - Output roster" << endl;
+cout << "q - Quit" << endl;
+cout << endl;
+
+cout << "Choose an option: " << endl;
+
+return;
+
+}
+//output roster function
+void outputRoster(const vector<int> &PlayerJnum, const vector<int> &PlayerRating){
+    cout << "ROSTER" << endl;
+    for(unsigned int i =0; i < PlayerJnum.size(); i++){
+        cout << "Player " << i+1 << " -- " << "Jersey number: " << PlayerJnum.at(i) << ", Rating: " << PlayerRating.at(i);
+        cout << endl;
+        
+
+    }
+
+
+    return;
+
+}
+//add player function 
+void addPlayer(vector<int> &PlayerJnum, vector<int> &PlayerRating){
+    int NewPlayerJersey;
+    int NewPlayerRating;
+    cout << "Enter another player's jersey number: ";
+    cin >>  NewPlayerJersey;
+    cout << endl;
+    PlayerJnum.push_back(NewPlayerJersey);
+    cout << "Enter another player's rating: ";
+    cin >> NewPlayerRating;
+    PlayerRating.push_back(NewPlayerRating);
+    cout << endl;
+}
+//remove a player from roster 
+void removePlayer(vector<int> &PlayerJnum, vector<int> &PlayerRating){
+    int deleteJersey;
+
+    cout << "Enter a jersey number: ";
+    cin >> deleteJersey;
+    cout << endl;
+    for ( unsigned int i=0; i < PlayerJnum.size(); i++){
+         if(deleteJersey == PlayerJnum.at(i)){
+
+             PlayerJnum.erase(PlayerJnum.begin()+i);
+             PlayerRating.erase(PlayerRating.begin()+i);
+            
+           
+
+         }
+    }
+}
+//Update player rating
+void updatePlayerRating(const vector<int> &PlayerJnum, vector<int> &PlayerRating){
+    int PlayerJersey;
+    int Rate;
+    cout << "Enter a jersey number: ";
+    cin >> PlayerJersey;
+    cout << endl;
+    cout << "Enter a new rating for player: ";
+    cin >> Rate;
+    cout << endl;
+
+    for(unsigned int i =0; i < PlayerJnum.size(); i++){
+        if(PlayerJersey == PlayerJnum.at(i)){
+            PlayerRating.at(i) = Rate;
+        }
+    }
+}
+//Print the jersey number and rating for all players with ratings above the entered value.
+void outputPlayersAboveRating(const vector<int> &PlayerJnum, const vector<int> &PlayerRating){
+    int rating;
+    cout << "Enter a rating: ";
+    cin >> rating;
+    cout << endl;
+    cout << endl;
+    cout << "ABOVE " << rating << endl; 
+
+    for( unsigned int i=0; i < PlayerRating.size(); i++){
+        if( PlayerRating.at(i) > rating){
+        cout << "Player " << i+1 << " -- Jersey number: " << PlayerJnum.at(i) << ", Rating: " << PlayerRating.at(i) << endl;
+    }
+
+    }
+    
+}
+
+int main() {
+
+   vector<int> PlayerJnum(5);
+   vector<int> PlayerRating(5);
+  
+
+   
+   int inputJnum;
+   int inputRating;
+   char UserinputMenu;
+   
+
+  //User input begins to fill players numbers and rankings
+   for(int i =0; i < 5; i++){
+       cout << "Enter player " << i+1 <<"'s jersey number: ";
+       cin >> inputJnum;
+       cout << endl;
+        //if input is not a number between 0 and 99 then the program will restart/not run
+       if(inputJnum < 0 || inputJnum > 99){
+        return 0;
+       }
+       //integer (jeresy number) is assigned to the index of the jeresy number vector
+       PlayerJnum.at(i) = inputJnum;
+
+       //assign players rating 
+       cout << "Enter player "<< i+1 << "'s rating: ";
+       cin >> inputRating;
+       //if the rating number/integer is not within  the range of 1 to 9 then the program will restart/not run
+       if(inputRating < 1 || inputRating > 9){
+           cout << endl;
+           return 0;
+           
+       }
+    // if there are no errors then the program will proceed to assign integers to their according indexes 
+       PlayerRating.at(i) = inputRating;
+       cout << endl;
+       cout << endl;
+
+       
+   }
+   
+
+   //output the roster once completed
+   outputRoster(PlayerJnum, PlayerRating);
+   
+   //display the menu shorter after for the user to select other features]
+   cout << endl;
+   displayMenu();
+
+   cin >> UserinputMenu;
+
+   while(UserinputMenu != 'q'){
+
+       if(UserinputMenu == 'a'){
+           addPlayer(PlayerJnum, PlayerRating);
+           cout << endl;
+           displayMenu();
+           cin >> UserinputMenu;
+
+
+       }
+       if(UserinputMenu == 'd'){
+           removePlayer(PlayerJnum, PlayerRating);
+           cout << endl;
+           displayMenu();
+           cin >> UserinputMenu;
+
+       }
+       if(UserinputMenu == 'u'){
+           updatePlayerRating(PlayerJnum,PlayerRating);
+           cout << endl;
+           displayMenu();
+           cin >> UserinputMenu;
+
+
+       }
+       if(UserinputMenu == 'r'){
+           outputPlayersAboveRating(PlayerJnum, PlayerRating);
+           cout << endl;
+           displayMenu();
+           cin >> UserinputMenu;
+
+
+       }
+       if(UserinputMenu == 'o'){
+           outputRoster(PlayerJnum, PlayerRating);
+           cout << endl;
+           displayMenu();
+           cin >> UserinputMenu;
+
+
+       }
+   }
+
+   
+   return 0;
+}
