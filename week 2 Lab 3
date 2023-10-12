@@ -1,0 +1,106 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <cctype> 
+#include <sstream>
+
+using namespace std;
+
+int main(int argc, char *argv[]) {
+   
+   string inputFile;
+   string outputFile;
+   int NumAvg;
+   int Totalnum =0;
+   vector<int> Numsize;
+   ifstream input;
+   istringstream inSS;
+   
+   
+   // Assign to inputFile value of 2nd command line argument
+   // Assign to outputFile value of 3rd command line argument
+   inputFile = argv[1];
+   outputFile = argv[2];
+   
+   // Create input stream and open input csv file.
+   if (argc != 3) {
+      cout << "Usage: 0 1 2" << endl;
+      return 1;  
+   }
+    
+   input.open(inputFile);
+
+   // Verify file opened correctly.
+   // Output error message and return 1 if file stream did not open correctly.
+   if(!input.is_open()){
+    cout << "File cannot open" << endl;
+    return 1;
+   }
+   
+   // Read in integers from input file to vector.
+   string inputnum;
+   string Numholder;
+   string Numholder2;
+   int ActualNum;
+   
+
+   while (getline(input, inputnum)) {
+      Numholder = inputnum;
+   }
+   
+   inSS.clear();
+   inSS.str(Numholder);
+
+    while (getline(inSS, Numholder2, ',')) {
+      ActualNum = stoi(Numholder2);
+      Numsize.push_back(ActualNum);
+    }
+
+
+   // Close input stream.
+   input.close();
+   
+   // Get integer average of all values read in.
+   for(unsigned int i=0; i < Numsize.size(); i++){
+    Totalnum = Numsize.at(i) + Totalnum;
+   }
+   
+   NumAvg = Totalnum / Numsize.size();
+   
+   // Convert each value within vector to be the difference between the original value and the average.
+   for(unsigned int i=0; i < Numsize.size(); i++){
+    Numsize.at(i) = Numsize.at(i) - NumAvg;  
+   }
+
+   // Create output stream and open/create output csv file.
+   ofstream output;
+
+   if (argc != 3) {
+      cout << "Usage: 0 1 2" << endl;
+      return 1;   
+   }
+
+   output.open(outputFile);
+
+   // Verify file opened or was created correctly.
+   // Output error message and return 1 if file stream did not open correctly.
+   if(!output.is_open()){
+    cout << "Output file cannot open" << endl;
+    return 1;
+   }
+   
+   // Write converted values into ouptut csv file, each integer separated by a comma.
+   for(unsigned int i=0; i < Numsize.size(); i++){
+    output << Numsize.at(i);
+
+    if (i < Numsize.size() -1) {
+    output << ',';
+   }
+
+   }
+  
+    output.close();
+    
+    return 0;
+}
