@@ -1,0 +1,43 @@
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <fstream>
+using namespace std;
+
+
+// returns total sum to main 
+int fileSum(const string& FileName) {
+    ifstream input;
+    int totalSum =0;
+    int num;
+    
+    input.open(FileName);
+
+    if(!input.is_open()){
+        cout << "Error opening " << FileName << endl;
+        exit(EXIT_FAILURE);
+    }
+    while(input >> num ){
+        totalSum = num + totalSum;
+
+    }
+
+    input.close();
+    
+ return totalSum;
+}
+
+int main(){
+    string FileName;
+    int sum;
+    cout << "Enter the name of the input file: ";
+    
+    cin >> FileName;
+    cout << endl;
+
+    sum = fileSum(FileName);
+
+    cout << endl << "Sum: " << sum << endl;
+
+return 0;
+}
