@@ -1,0 +1,67 @@
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <fstream>
+using namespace std;
+
+
+int charCnt(const string &fileName, char Character ){
+    ifstream input;
+    int Count=0;
+    char CharacterinFile;
+    
+
+    input.open(fileName);
+
+    if(!input.is_open()){
+        cout << "Error opening " << fileName << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    while(input.get(CharacterinFile)){
+        
+
+        if(CharacterinFile == Character){
+            Count++;
+        }
+       
+    }
+    
+    input.close();
+
+   
+
+    return Count;
+
+
+}
+
+
+
+
+int main(){
+    char Character;
+    int characterAMT;
+    string fileName;
+
+    cout << "Enter the name of the input file: ";
+    cin >> fileName;
+    cout << endl;
+    cout << "Enter a character: ";
+    cin.ignore();
+    cin.get(Character);
+    cout << endl;
+
+
+    characterAMT = charCnt(fileName, Character);
+
+    cout << "# of " << Character << "'s: " << characterAMT << endl;
+
+
+    
+
+    
+
+
+return 0;
+}
