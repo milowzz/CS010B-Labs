@@ -26,6 +26,7 @@ using namespace std;
 /*readData: passes in the name of a file and two empty vectors (double) and stores in the first vector the flight-path angles (first column) and in 
 the second vector the corresponding coefficients of lift (2nd column). If the file does not open 
 properly, this function should output an error message and then call the exit function passing it an exit value of 1.*/
+//WORKS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 void readData(const string &fileOne, vector<double> &FlightPathAngle, vector<double> &CoefficientoLift){
 double FPathA;
 double CoLift; 
@@ -36,33 +37,64 @@ ifstream input;
 input.open(fileOne);
 
 if(!input.is_open()){
-     cout << fileOne << " could not open" << endl;
+     cout << "Error opening " << fileOne << endl;
      exit(EXIT_FAILURE);
 }
 
+
+
 while(input >> FPathA >> CoLift){
+    
      FlightPathAngle.push_back(FPathA);
      CoefficientoLift.push_back(CoLift);
 
 }
+
+input.close();
+
 
 
 }
 
 /*Interpolation: passes in the requested flight-path angle along with the 2 vectors of data (flight-path angles 
 and corresponding coefficients of lift) and returns the corresponding coefficient of lift.*/
-/*double interpolation(double UserinputFPA, const vector<double> &FlightPathAngle, const vector<double> &CoefficientoLift){
-double NewCoL; 
-     
-     NewCoL = f(a) + ((b - a)/(c - a))(f(c) - f(a));
+
+double interpolation(double UserinputFPA, const vector<double> &FlightPathAngle, const vector<double> &CoefficientoLift){
+
+     double SmallestAngle = FlightPathAngle.at(0);
+     int num = FlightPathAngle.size()-1;
+     double BiggestAngle = FlightPathAngle.at(num);
+     double NewCoL;
+
+     //If FPA is out of bounds 
+     if(UserinputFPA < SmallestAngle || UserinputFPA > BiggestAngle ){
+     return 0.0;
+     }
+
+     //Get the closest FPA possible  
+     for(unsigned int i =0; i <FlightPathAngle.size(); i++ ){
+     if(UserinputFPA == FlightPathAngle.at(i)){
+     return CoefficientoLift.at(i);
+     }
+          
+     if(UserinputFPA > FlightPathAngle.at(i) && UserinputFPA < FlightPathAngle.at(i + 1)){
+     NewCoL = CoefficientoLift.at(i) + (UserinputFPA - FlightPathAngle.at(i)) / (FlightPathAngle.at(i + 1) - FlightPathAngle.at(i)) * (CoefficientoLift.at(i + 1) - CoefficientoLift.at(i));
+     return NewCoL;
+     }
+
+     }
+     return 0;
+          
 }
-*/
+
+
 
 /*passes in the vector of flight-path angles and returns true if it stores the angles are in ascending order, otherwise returns false.*/
+//WORKS//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 bool isOrdered(const vector<double> &FlightPathAngle){
      
-     for(unsigned int i = 0; i< FlightPathAngle.size(); i++){
-          if(FlightPathAngle.at(i) > FlightPathAngle.at(i+1)){
+     for(unsigned int i = 1; i< FlightPathAngle.size(); i++){
+          if(FlightPathAngle.at(i-1) > FlightPathAngle.at(i)){
                return false;
           }
      }
@@ -73,91 +105,80 @@ bool isOrdered(const vector<double> &FlightPathAngle){
 /*passes in both vectors of data and then reorders the data so that the flight-path angles are in ascending order while 
 maintaining the correspondence between the flight-path angles and their corresponding coefficients of lift.*/
 void reorder(vector<double> &FlightPathAngle, vector<double> &CoefficientoLift){
-     
-     for( unsigned int i=0; i<FlightPathAngle.size()-1; i++ ){
-          if(FlightPathAngle.at(i) > FlightPathAngle.at(i+1)){
-               FlightPathAngle.at(i+1) = FlightPathAngle.at(i);
-               CoefficientoLift.at(i+1) = CoefficientoLift.at(i);
+
+
+     for(unsigned int i=0; i<FlightPathAngle.size(); i++ ){
+          for(unsigned int i=1; i<FlightPathAngle.size(); i++ ){
+               if(FlightPathAngle.at(i) < FlightPathAngle.at(i-1)){
+                  swap(FlightPathAngle.at(i-1), FlightPathAngle.at(i));
+                  swap(CoefficientoLift.at(i-1), CoefficientoLift.at(i));
+               }
+          
           }
+              
      }
+
+
 }
+
 
 int main(int argc, char *argv[]){
 
 
 vector<double> FlightPathAngle;
 vector<double> CoefficientoLift;
+double UserinputFPA;
+string userchoice;
 
 
 string fileOne;
-string fileTwo;
+
 
 
 fileOne = argv[1];
-fileTwo = argv[2];
+
 
      
-if (argc != 3) {
+if (argc != 2) {
      cout << "Usage: 0 1 2" << endl;
      exit(EXIT_FAILURE);  
 }
 //Read the files and input FPA and CoL values into two seperate vectors of double data type
+
 readData(fileOne, FlightPathAngle, CoefficientoLift);
 
 
-//Find the smallest angle in the dataset
-double SmallestAngle = FlightPathAngle.at(0);
-for(unsigned int i=0; i < FlightPathAngle.size(); i++){
-     if(FlightPathAngle.at(i) < SmallestAngle){
-          SmallestAngle = FlightPathAngle.at(i);
-     } 
-}
 
-//find the biggest angle in the dataset
-double BiggestAngle = FlightPathAngle.at(0);
-for(unsigned int i=0; i < FlightPathAngle.size(); i++){
-     if(FlightPathAngle.at(i) > BiggestAngle){
-          BiggestAngle = FlightPathAngle.at(i);
-     } 
-}
+//ask the user to put a inputFPA
 
-//Program will ask user for flight path angle
-double UserinputFPA;
-string inputDecision;
+cout << "Enter a flight path angle: ";
+cin >> UserinputFPA;
 
-
-//calls interpolation if the angle is between the bounds of the dataset
-if(SmallestAngle < UserinputFPA &&  UserinputFPA < BiggestAngle){
-     interpolation(UserinputFPA, FlightPathAngle, CoefficientoLift);
+//make sure that the dataset is in order before using interpolation
+if(isOrdered(FlightPathAngle) == false){
+     reorder(FlightPathAngle,CoefficientoLift);
 }
 
 
-//ask the user if they want to input another FPA
+ double finalCOL = interpolation(UserinputFPA, FlightPathAngle, CoefficientoLift);
 
+ cout << "The coefficient of lift is: " << finalCOL;
+ cout << endl;
 
-while(inputDecision != "No"){
-     cout << "Enter FPA: ";
-     cin >> UserinputFPA;
-     cout << "Enter another flight path angle? ";
-     cin >> inputDecision;
-     
+while(userchoice != "No"){
+cout << "Would you like to enter another FPA? ";
+cin >> userchoice;
+
+if(userchoice == "Yes"){
+cout << "Enter a flight path angle: ";
+cin >> UserinputFPA;
+double finalCOL = interpolation(UserinputFPA, FlightPathAngle, CoefficientoLift);
+
+cout << "The coefficient of lift is: " << finalCOL;
+cout << endl;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
    return 0;
