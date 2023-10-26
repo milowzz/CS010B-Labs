@@ -95,6 +95,37 @@ ostream & operator<<(ostream &o, Distance rhs) {
 
 
 
+///Distance.h file 
+
+// have the class declared here
+//include the private and public member functions/variables
+#include <iostream>
+
+using namespace std;
+
+
+class Distance {
+public:
+
+
+Distance();
+Distance(int FT, double IN);
+Distance(double IN);
+double distanceInches() const;
+double distanceFeet() const;
+Distance operator+(Distance rhs);
+Distance operator-(Distance rhs);
+friend ostream & operator<<(ostream &o,  Distance rhs);
+
+private:
+
+int feet;
+double inches;
+
+};
+
+
+
 
 
 
