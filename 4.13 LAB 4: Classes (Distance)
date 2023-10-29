@@ -1,131 +1,252 @@
-//Distance.cpp file
-//Implement the functions 
-//constructors will also be included in here too
 
+//Main.cpp file////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <iostream>
+
 using namespace std;
+
 #include "Distance.h"
-#include <cmath>
 
-
-Distance::Distance(){
-    feet =0;
-    inches =0;
+int main() {
+   Distance d1;
+   cout << "d1: " << d1 << endl;
+   
+   Distance d2 = Distance(2, 5.9);
+   Distance d3 = Distance(3.75);
+   cout << "d2: " << d2 << endl;
+   cout << "d3: " << d3 << endl;
+   
+   //test init helper function
+   Distance d4 = Distance(5, 19.34);
+   Distance d5 = Distance(100);
+   cout << "d4: " << d4 << endl;
+   cout << "d5: " << d5 << endl;
+   
+   //test add (<12 inches)
+   cout << "d4 + d5: " << (d4 + d5) << endl;
+   //test add (>12 inches)
+   cout << "d2 + d4: " << (d2 + d4) << endl;
+   
+   //test sub (0 ft)
+   cout << "d3 - d1: " << (d3 - d1) << endl;
+   //test sub (0 ft, negative conversion)
+   cout << "d1 - d3: " << (d1 - d3) << endl;
+   
+   //test sub (positive ft & inch)
+   cout << "d4 - d2: " << (d4 - d2) << endl;
+   //test sub (negative ft & inch)
+   cout << "d2 - d4: " << (d2 - d4) << endl;
+   
+   //test sub (negative ft, positive inch)
+   cout << "d4 - d5: " << (d4 - d5) << endl;
+   //test sub (positive ft, negative inch)
+   cout << "d5 - d2: " << (d5 - d2) << endl;
+   
+   return 0;
 }
-
-
-Distance::Distance(unsigned FT, double IN) {
-   feet = FT;
-   inches = IN;
-   if(inches < 0){
-   inches = inches * -1;
-   }
-
-   while(inches >= 12){
-   feet++;
-   inches = inches -12;
-   }
-
-}
-
-Distance::Distance(double IN) {
-   feet = 0;
-   inches = IN;
-
-   if(inches < 0){
-   inches = inches * -1;
-   }
-
-   while(inches >= 12){
-   feet++;
-   inches = inches -12;
-   }
-
-}
-
-double Distance::distanceInches() const{
-return (feet*12 + inches);
-}
-
-
-
-double Distance::distanceFeet() const{
-return (feet + inches/12.0);
-}
-
-
-Distance Distance::operator+(Distance rhs) {
-   Distance totalDistance;
-
-   totalDistance.feet = feet + rhs.feet;
-   totalDistance.inches = inches + rhs.inches;
-
-   if(totalDistance.inches > 12){
-    totalDistance.inches = totalDistance.inches -12;
-    totalDistance.feet++;
-   }
-
-
-   return totalDistance;
-}
-
-Distance Distance::operator-(Distance rhs) {
-   Distance totalDistance;
-
-   double temp = distanceInches() - rhs.distanceInches();
-   totalDistance.feet = (temp/12);
-   if(totalDistance.feet < 0){
-    totalDistance.feet = abs(totalDistance.feet);
-   }
-
-   totalDistance.inches = fmod(temp, 12);
-   if(totalDistance.inches < 0){
-    totalDistance.inches = abs(totalDistance.inches);
-
-   }
-
-
-   return totalDistance;
-}
-
-ostream & operator<<(ostream &o, Distance rhs) {
-   o << rhs.feet << "'"  << " " << rhs.inches << "\"" << endl;
-   return o;
-}
-
-
-
-///Distance.h file 
-
-// have the class declared here
-//include the private and public member functions/variables
+//Distance.h file//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <iostream>
-
 using namespace std;
-
 
 class Distance {
-public:
+
+ public:
+
+   /* Constructs a default Distance of 0 (0 feet and 0.0 inches)
+   */
+   Distance();
 
 
-Distance();
-Distance(int FT, double IN);
-Distance(double IN);
-double distanceInches() const;
-double distanceFeet() const;
-Distance operator+(Distance rhs);
-Distance operator-(Distance rhs);
-friend ostream & operator<<(ostream &o,  Distance rhs);
+   /* Constructs a distance of ft feet and in inches,
+        unless in >= 12, in which case the values of feet and inches
+        are adjusted accordingly. A Distance will always be positive.
+        Just convert negative inches to positive. Don't subtract from feet.
+   */
+   Distance(unsigned ft, double in);
 
-private:
 
-int feet;
-double inches;
+   /* Constructs a distance of 0 ft and in inches, 
+        unless in >= 12, in which case the values of feet and inches
+        are adjusted accordingly. A Distance will always be positive.
+        Just convert negative inches to positive. Don't subtract from feet.
+   */
+   Distance(double in);
 
+
+   /* Returns just the feet portion of the Distance
+   */
+   unsigned getFeet() const;
+
+
+   /* Returns just the inches portion of the Distance
+   */
+   double getInches() const;
+
+
+   /* Returns the entire distance as the equivalent amount of inches.
+        (e.g., 4 feet 3.5 inches would be returned as 51.5 inches)
+   */
+   double distanceInInches() const;
+
+
+   /* Returns the entire distance as the equivalent amount of feet.
+        (e.g., 3 feet 6 inches would be returned as 3.5 feet)
+   */
+   double distanceInFeet() const;
+
+
+   /* Returns the entire distance as the equivalent amount of meters.
+        1 inch equals 0.0254 meters.
+        (e.g., 2 feet 8.12 inches would be returned as 0.815848 meters)
+   */
+   double distanceInMeters() const;
+
+
+   /* Returns the sum of 2 Distances.
+   */
+   Distance operator+(const Distance &rhs) const;
+
+
+   /* Returns the difference between 2 Distances.
+   */
+   Distance operator-(const Distance &rhs) const;
+
+
+   /* Outputs to the stream out the Distance in the format: 
+        feet' inches'' (i.e. 3' 3.41'')
+   */
+   friend ostream & operator<<(ostream &out, const Distance &rhs);
+
+ private:
+
+   /* Used by the 2 parameterized constructors to convert any negative values to positive and
+        inches >= 12 to the appropriate number of feet and inches.
+   */
+   void init();
+    
+
+   unsigned _feet;
+   double _inches;    
+    
 };
+// Distance.cpp file//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <iostream>
+#include "Distance.h"
+using namespace std;
+
+//Constructs a default Distance of 0 (0 feet and 0.0 inches)
+Distance::Distance(){
+_feet = 0;
+_inches = 0;
+}
 
 
+/* Constructs a distance of ft feet and in inches,
+unless in >= 12, in which case the values of feet and inches
+are adjusted accordingly. A Distance will always be positive.*/
+
+Distance::Distance(unsigned ft, double in){
+_feet = ft;
+_inches = in;
+init();
+}
 
 
+/* Constructs a distance of 0 ft and in inches,
+unless in >= 12, in which case the values of feet and inches
+are adjusted accordingly. A Distance will always be positive.*/
+
+Distance::Distance(double in){
+_feet = 0;
+_inches = in;
+init();
+}
 
 
+//Returns just the feet portion of the Distance
+unsigned Distance::getFeet() const{
+return _feet;
+}
+
+
+//Returns just the inches portion of the Distance
+double Distance::getInches() const{
+return _inches;
+}
+
+
+/* Returns the entire distance as the equivalent amount of inches.
+(e.g., 4 feet 3.5 inches would be returned as 51.5 inches)*/
+
+double Distance::distanceInInches() const{
+return (_feet*12 + _inches);
+}
+
+
+/* Returns the entire distance as the equivalent amount of feet.
+(e.g., 3 feet 6 inches would be returned as 3.5 feet)*/
+
+double Distance::distanceInFeet() const{
+return (_feet + _inches/12.0);
+}
+
+
+/* Returns the entire distance as the equivalent amount of meters.
+1 inch equals 0.0254 meters.
+(e.g., 2 feet 8.12 inches would be returned as 0.815848 meters)*/
+
+double Distance::distanceInMeters() const{
+return distanceInInches()*0.0254;
+}
+
+
+// Returns the sum of 2 Distances
+Distance Distance::operator+(const Distance &rhs) const{
+Distance SumInch(distanceInInches()+rhs.distanceInInches());
+return SumInch;
+}
+
+
+//Returns the difference between 2 Distances
+Distance Distance::operator-(const Distance &rhs) const{
+double DifSize = distanceInInches() - rhs.distanceInInches();
+if(DifSize < 0)
+DifSize = DifSize * -1;
+
+Distance Dif(DifSize);
+return Dif;
+/*
+if(distanceInInches() - rhs.distanceInInches() < 0){
+
+   ;
+}
+return Distance(distanceInInches() - rhs.distanceInInches() *- 1);
+else
+{
+   returns null;
+}
+
+*/
+}
+
+
+/* Outputs to the stream out the Distance in the format:
+feet' inches'' (i.e. 3' 3.41'')*/
+
+ostream & operator<<(ostream &out, const Distance &rhs){
+out<<rhs.getFeet()<<"\' "<<rhs.getInches()<<"\"";
+return out;
+}
+
+/* Used by the 2 parameterized constructors to convert any negative values to positive and
+inches >= 12 to the appropriate number of feet and inches.*/
+
+void Distance::init(){
+
+if(_inches < 0)
+_inches = _inches * -1;
+
+while(_inches >= 12){
+_feet = _feet + 1;
+_inches = _inches -12;
+}
+}
