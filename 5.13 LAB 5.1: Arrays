@@ -24,9 +24,9 @@ double mean(const double array[], int arraySize){
 //  - Removes the value at this index by shifting all of the values after this value up, keeping the same relative order of all values not removed.
 //  - Reduces arraySize by 1.
 void remove(double array[], int &arraySize, int index){
-if (index < arraySize){
+if (index > 0 || index arraySize){
 arraySize = arraySize -1;
-    for (int i = index; i < arraySize; i++){
+    for (int i = -1; i < arraySize; i++){
     array[i] = array[i + 1];
 }
    }
