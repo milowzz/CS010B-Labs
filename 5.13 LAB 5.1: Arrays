@@ -1,0 +1,135 @@
+//include any standard libraries needed
+#include <iostream>
+#include <string.h>
+#include <fstream>
+
+
+
+using namespace std;
+
+
+//  - Passes in an array along with the size of the array.
+//  - Returns the mean of all values stored in the array.
+double mean(const double array[], int arraySize){
+    double sum =0;
+    for(int i =0; i < arraySize; i++){
+        sum = sum + array[i];
+    }
+
+    return sum/arraySize;
+    
+}
+
+//  - Passes in an array, the size of the array by reference, and the index of a value to be removed from the array.
+//  - Removes the value at this index by shifting all of the values after this value up, keeping the same relative order of all values not removed.
+//  - Reduces arraySize by 1.
+void remove(double array[], int &arraySize, int index){
+if (index < arraySize){
+arraySize = arraySize -1;
+    for (int i = index; i < arraySize; i++){
+    array[i] = array[i + 1];
+}
+   }
+}
+
+
+// - Passes in an array and the size of the array.
+// - Outputs each value in the array separated by a comma and space, with no comma, space or newline at the end.
+void display(const double array[], int arraySize){
+    for(int i =0; i < arraySize; i++){
+        if(i < arraySize-1 ){
+            cout << array[i] << ", ";
+        }
+        else{
+            cout << array[i] << endl;
+        }
+    }
+}
+
+
+const int ARR_CAP = 100;
+
+
+int main(int argc, char *argv[]) {
+   
+   // verify file name provided on command line
+   int Remvindex; // index is for the user to input 
+   if(argc!=2){
+
+   cout << "Usage: 0 1" << endl;
+
+   return 1;
+   }
+
+   string File1 = argv[1];
+   
+    // open file and verify it opened
+    //MAKE SURE TO INCLUDE THE FILE NAME AFTER ./A.OUT ON THE COMMAND LINE!!!
+    ifstream Input;
+
+    Input.open(File1);
+
+    if(!Input.is_open()){
+
+    cout<<"Unable to open file: "<< File1 <<endl;
+
+    return 1;
+
+    }
+
+   // Declare an array of doubles of size ARR_CAP.
+
+    double ArrayOf_D[ARR_CAP];
+
+   // Fill the array with up to ARR_CAP doubles from the file entered at the command line.
+    //double Value;
+    int I =0;
+    while(Input >> ArrayOf_D[I]){
+        //Input >> ArrayOf_D[I];
+        I++;
+    }
+    
+    Input.close();
+   
+   //I = I;
+    
+   // Call the mean function passing it this array and output the 
+   // value returned.
+
+    cout << "Mean: " << mean(ArrayOf_D, I) << endl;
+
+
+    
+   // Ask the user for the index (0 to size - 1) of the value they want to remove.
+
+   cout << "Enter index of value to be removed (" << 0 << " to " << I-1 << ") :";
+   cin >> Remvindex;
+
+   cout << endl;
+   // Call the display function to output the array.
+
+   cout << "Before removing value: "; 
+   display( ArrayOf_D, I);
+
+
+
+   
+   // Call the remove function to remove the value at the index
+   // provided by the user.
+
+   remove(ArrayOf_D, I, Remvindex);
+  
+    
+   // Call the display function again to output the array
+   // with the value removed.
+
+   cout << "After removing value: ";
+   display(ArrayOf_D, I);
+
+
+   
+   // Call the mean function again to get the new mean
+   cout << "Mean: " << mean(ArrayOf_D, I) << endl;
+   
+	return 0;
+}
