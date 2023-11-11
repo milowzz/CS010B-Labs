@@ -1,0 +1,114 @@
+//IntVector.cpp FILE //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <iostream>
+#include "IntVector.h"
+#include <stdexcept>
+using namespace std;
+
+
+//Default constructor
+IntVector::IntVector(unsigned capacity, int value) : _size(capacity), _capacity(capacity) {
+    
+    if(capacity > 0){
+        _data  = new int [capacity];
+        for(unsigned int i =0; i < _size; i++){
+            _data[i] = value;
+        }
+    }
+
+    else{
+        _data = nullptr;
+    } 
+    
+}
+//destructor 
+IntVector::~IntVector(){
+    delete[] _data; //dealocates the _data address (array)
+    _data = nullptr; //makes the address into a nullpointer (no value)
+}
+
+unsigned IntVector::size() const{
+    return _size;
+}
+
+unsigned IntVector::capacity() const{
+    return _capacity;
+}
+
+bool IntVector::empty() const{
+    return (_size == 0);
+}
+
+const int& IntVector::at(unsigned index) const{
+    if(index >= _size || _size  == 0){
+        throw out_of_range("IntVector::at_range_check");
+    } 
+    else {
+        return _data[index];
+    }
+}
+
+const int& IntVector::front() const{
+    return _data[0]; 
+}
+
+const int& IntVector::back() const{
+    return _data[_size-1];  
+}
+
+
+
+// IntVector.h FILE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifndef IntVector_H
+#define IntVector_H
+
+using namespace std;
+
+class IntVector {
+
+
+private:
+unsigned _size; //stores the size of the IntVector (the number of elements currently being used to store the user's values).
+unsigned _capacity;  //store the size of the array (therefore must always be >= to _size).
+int *_data; //a pointer that stores the address of the dynamically-allocated array of integers
+
+
+public:
+IntVector(unsigned capacity = 0, int value = 0);
+~IntVector();
+unsigned size() const;
+unsigned capacity() const;
+bool empty() const;
+const int & at(unsigned index) const;
+const int & front() const;
+const int & back() const;
+
+
+
+
+};
+
+#endif
+
+//Main.cpp FILE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "IntVector.h"
+#include <iostream>
+
+using namespace std;
+
+int main(){
+
+int index;
+//test case #1 testing for an array of size and capacity 4 with values of 2
+IntVector V1 = IntVector(4, 2);
+cout << "Size: " << V1.size() << endl;
+cout << "Capacity: " << V1.capacity() << endl;
+
+cout << "Enter Index: ";
+cin >> index;
+cout << "Index is: " << V1.at(index) << endl;
+
+    return 0;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
