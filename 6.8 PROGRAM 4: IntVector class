@@ -1,0 +1,372 @@
+//Main.cpp FILE////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <iostream>
+#include "IntVector.h"
+using namespace std;
+
+int main()
+{
+    IntVector s = IntVector(2,10);
+
+    /*
+    cout << s.size() << endl;
+
+    s.~IntVector();
+
+    s = IntVector(10,10);
+
+    cout << s.size() << endl;
+
+    if(s.empty())
+    {
+        cout << "empty" << endl;
+    }
+    else
+    {
+        cout << "not empty" << endl;
+    }
+
+    cout << "vector at 1 is: " << s.at(1) << endl;
+    
+    cout << "vector at 0 is: " <<s.front() << endl;
+
+    cout << "vector at end is: " <<s.back() << endl;
+
+    //test insert
+    s.insert(5,5);
+    cout << endl;
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl;
+
+    //test erase
+    s.erase(5);
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+
+    //test push back
+    s.push_back(20);
+    cout << endl;
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl;
+
+    //test pop back
+    s.pop_back();
+    cout << endl;
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl;
+
+    //test clear
+    s.clear();
+    cout << s.size() << endl;
+
+    //test resize
+    s.~IntVector();
+    s = IntVector(10,10);
+    s.resize(15,30);
+    cout << endl;
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl;
+
+    //test reserve
+    s.reserve(12);
+
+    //test assign
+    s.assign(5,13);
+    cout << endl;
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl;
+    */
+   /*
+   cout << "old array:" << endl;
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl << "newer array: " << endl;
+    s.push_back(1);
+   //cout << s.at(1) << endl;
+   for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl;
+    */
+    /////////////////////////////////////////////////////////
+    s.~IntVector();
+    s = IntVector(0,10);
+    s.resize(20,30);
+    cout << endl;
+    for(unsigned int i = 0; i < s.size(); ++i)
+    {
+        cout << s.at(i) << endl;
+    }
+    cout << endl;
+
+    return 0;
+}
+
+//IntVector.h/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifndef IntVector_H
+#define IntVector_H
+
+using namespace std;
+
+class IntVector {
+
+
+private:
+unsigned _size; //stores the size of the IntVector (the number of elements currently being used to store the user's values).
+unsigned _capacity;  //store the size of the array (therefore must always be >= to _size).
+int *_data; //a pointer that stores the address of the dynamically-allocated array of integers
+void expand(); //this function will double the capacity of the array
+void expand(unsigned amount); //this function will increase it by a given amount
+
+public:
+IntVector(unsigned capacity = 0, int value = 0);
+~IntVector();
+//void expand();
+unsigned size() const;
+unsigned capacity() const;
+bool empty() const;
+const int & at(unsigned index) const;
+int & at(unsigned index);
+const int & front() const;
+int & front();
+const int & back() const;
+int & back();
+void insert(unsigned index, int value);
+void erase(unsigned index);
+void assign(unsigned n, int value);
+void push_back(int value);
+void pop_back();
+void clear();
+void resize(unsigned n, int value = 0);
+void reserve(unsigned n);
+
+
+
+
+};
+
+#endif
+
+//IntVector.cpp //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <iostream>
+#include "IntVector.h"
+#include <stdexcept>   
+using namespace std;
+
+
+//Default constructor
+IntVector::IntVector(unsigned capacity, int value) : _size(capacity), _capacity(capacity) {
+    
+    if(_capacity > 0){
+        _data  = new int [_capacity];
+        for(unsigned int i =0; i < _size; i++){
+            _data[i] = value;
+        }
+    }
+
+    else{
+        _data = nullptr;
+    } 
+    
+}
+//destructor 
+IntVector::~IntVector(){
+    delete[] _data; //dealocates the _data address (array)
+    _data = nullptr; //makes the address into a nullpointer (no value)
+}
+
+unsigned IntVector::size() const{
+    return _size;
+}
+
+unsigned IntVector::capacity() const{
+    return _capacity;
+}
+
+bool IntVector::empty() const{
+    return (_size == 0);
+}
+
+const int& IntVector::at(unsigned index) const{
+   if(index < _size)
+    {
+        return _data[index];
+    }
+    else
+    {
+        throw out_of_range("IntVector::at_range_check");
+    }
+    
+}
+
+const int& IntVector::front() const{
+    return _data[0]; 
+}
+
+const int& IntVector::back() const{
+    return _data[_size-1];  
+}
+
+void IntVector::expand(){
+_capacity = _capacity *2;
+if(_capacity == 0){
+    _capacity = 1; 
+}
+
+int* _temp = new int[_capacity];
+
+for(unsigned int i = 0; i < _size; ++i){
+    _temp[i] = _data[i];    
+}
+
+delete[] _data;
+_data = _temp;
+//_capacity = capacityTemp;
+
+}
+
+void IntVector::expand(unsigned amount){
+_capacity = _capacity + amount;
+int* _temp = new int [_capacity];
+
+for(unsigned int i = 0; i < _size; ++i){
+    _temp[i] = _data[i];    
+}
+delete [] _data;
+_data = _temp;
+
+
+}
+
+
+void IntVector::insert(unsigned index, int value){
+    if(index > _size){
+        throw out_of_range("IntVector::insert_range_check");
+    }
+    
+    if(_capacity == _size){
+    expand();
+    }
+    
+    for( unsigned i =_size; i > index; i--){
+        _data[i] = _data[i-1];
+    }
+    _data[index] = value;
+    _size++;
+}
+
+    void IntVector::erase(unsigned index){
+        if(index >= _size){
+             throw out_of_range("IntVector::erase_range_check");
+        }
+        
+        for(unsigned i = index; i < _size; ++i){
+            _data[i] = _data[i+1];
+        }  
+            _size = _size -1;
+
+        
+
+    }
+
+    void IntVector::push_back(int value){
+        if(_size >= _capacity){
+            expand();
+        }
+        _data[_size] = value;
+        _size = _size +1;
+    }
+
+
+
+
+    void IntVector::pop_back(){
+        _size = _size -1;
+
+    }
+
+    void IntVector::clear(){
+        _size = 0;
+    }
+
+    void IntVector::resize(unsigned size, int value){
+    if (size < _size) {
+        _size = size;
+    }
+
+    else if (size > _size) {
+        if (size > _capacity) {
+            if(_capacity * 2 >= size) {
+            expand();
+            }
+       
+        else {
+            expand(size - _capacity);
+        }
+    }
+    for (unsigned i = _size; i<size; ++i) {
+            _data[i] = value;
+        }
+    }
+        _size = size;
+    }
+
+    void IntVector::reserve(unsigned n){
+         if(n > _capacity) {
+           expand(n - _capacity);
+        }
+    }
+
+void IntVector::assign(unsigned n, int value){
+    if(n > _capacity *2){
+           expand(n-_capacity);
+       } else if(n > _capacity) {
+           expand();
+       }
+        for(unsigned i = 0; i < n; ++i) {
+            _data[i] = value;
+        }
+      _size = n;
+}  
+
+
+
+int & IntVector::front(){
+    return _data[0]; 
+}
+
+int & IntVector::back(){
+    return _data[_size-1];  
+}
+
+int & IntVector::at(unsigned index){
+    if(index < _size)
+    {
+        return _data[index];
+    }
+    else
+    {
+        throw out_of_range("IntVector::at_range_check");
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
