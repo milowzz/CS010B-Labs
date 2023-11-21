@@ -1,0 +1,229 @@
+///MAIN.CPP////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <iostream>
+using namespace std;
+
+#include "IntList.h"
+
+int main() {
+
+  //tests constructor, destructor, push_front, pop_front, display
+
+   {
+      cout << "\nlist1 constructor called" << endl;
+      IntList list1;
+      cout << "pushfront 10" << endl;
+      list1.push_front(10);
+      cout << "pushfront 20" << endl;
+      list1.push_front(20);
+      cout << "pushfront 30" << endl;
+      list1.push_front(30);
+      cout << "list1: " << list1 << endl;
+      cout << "pop" << endl;
+      list1.pop_front();
+      cout << "list1: " << list1 << endl;
+      cout << "pop" << endl;
+      list1.pop_front();
+      cout << "list1: " << list1 << endl;
+      cout << "pop" << endl;
+
+      list1.pop_front();
+     // cout <<"hi" << endl;
+      cout << "list1: " << list1 << endl;
+      cout << "pushfront 100" << endl;
+      list1.push_front(100);
+      cout << "pushfront 200" << endl;
+      list1.push_front(200);
+      cout << "pushfront 300" << endl;
+      list1.push_front(300);
+      cout << "list1: " << list1 << endl;
+      cout << endl;
+      cout << "Calling list1 destructor..." << endl;
+   }
+   cout << "list1 destructor returned" << endl;
+   
+   // Test destructor on empty IntList
+   {
+      IntList list2;
+      cout << "Calling list2 destructor..." << endl;
+   }
+   cout << "list2 destructor returned" << endl;
+   
+   return 0;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//IntList.H//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef INTLIST_H
+#define INTLIST_H
+
+#include <iostream>
+using namespace std;
+
+struct IntNode {
+	int value;
+	IntNode *next;
+	IntNode(int value) : value(value), next(nullptr) { }
+};
+
+class IntList {
+ private:
+	IntNode *head;
+	IntNode *tail;
+ public:
+	IntList();
+	~IntList();
+	void clear();
+	void push_front(int);
+	void pop_front();
+	bool empty() const;
+	const int & front() const;
+	const int & back() const;
+	friend ostream & operator<<(ostream &, const IntList &);
+};
+
+#endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//IntList.cpp//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "IntList.h"
+#ifndef INTLIST
+#define INTLIST
+#include <iostream>
+using namespace std;
+
+IntList::IntList(){
+
+    head = nullptr;
+    tail = nullptr;
+
+}
+
+IntList::~IntList(){
+    clear();
+}
+
+void IntList::pop_front(){
+    if (empty()) {
+        return;
+    }
+
+    IntNode* temp = head;
+
+    
+    head = head->next;
+
+    // If head is now nullptr, update tail to nullptr as well
+    if (head == nullptr) {
+        tail = nullptr;
+    }
+
+    // Deallocate memory for the saved node
+    delete temp;
+}
+
+
+const int& IntList::front() const{
+    if(empty())
+    {
+        exit(1);
+    }
+    return head->value;
+
+}
+
+const int& IntList::back() const{
+    if(empty()){
+        exit(1);
+    }
+
+    IntNode* current = head;
+        while (current->next != nullptr) {
+            current = current->next;
+        }
+
+        // Returning a reference to the last value
+        return current->value;
+
+    
+}
+
+
+void IntList::push_front(int value){ //FIXME
+
+    if(empty()){
+       this->head = this->tail = new IntNode(value);
+    }
+    else {
+        IntNode* temp = new IntNode(value);
+        temp->next = this->head;
+        this->head =temp;
+    }
+   
+
+    /*IntNode* Newnode = new IntNode(value);
+    Newnode->next = head;
+    head = Newnode;
+
+    IntNode* t = head;
+    head = new IntNode(num);
+    head->next = t;
+    */
+    
+}
+
+bool IntList::empty() const{
+     return (head == nullptr && tail == nullptr);
+}
+
+void IntList::clear(){
+ 
+while (head != nullptr) {
+    pop_front();
+}
+
+
+
+
+
+
+   /* while (head != nullptr) {
+        IntNode* temp = head;  // Save the current head
+        head = head->next;     // Move head to the next node
+        delete temp;           // Deallocate memory for the saved node
+    }
+
+    // After clearing list, head and tail = nullptr
+    head = nullptr;
+    tail = nullptr;
+    */
+}
+
+ostream & operator<<(ostream &out, const IntList &list){
+  if(list.empty())
+    {
+        return out;
+    }
+   IntNode* temp = list.head;
+  
+   if(temp->next == nullptr)
+       {
+           out << temp->value;
+       }
+   while(temp->next != nullptr)
+    {
+       out << temp->value << " ";
+       temp = temp->next; 
+       if(temp->next == 0)
+       {
+           out << temp->value;
+       }
+    }
+    
+   return out; 
+}
+
+#endif
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
